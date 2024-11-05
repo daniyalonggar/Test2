@@ -112,6 +112,16 @@ fun NextScreen(items: List<NavigationItem>) {
                         Movie("Movie 7", "Drama", R.drawable.kino),
                         Movie("Movie 8", "Drama", R.drawable.kino)
                     ),
+                    "Топ рейтинга" to listOf(
+                        Movie("Movie 1", "Drama", R.drawable.kino),
+                        Movie("Movie 2", "Drama", R.drawable.kino),
+                        Movie("Movie 3", "Drama", R.drawable.kino),
+                        Movie("Movie 4", "Drama", R.drawable.kino),
+                        Movie("Movie 5", "Drama", R.drawable.kino),
+                        Movie("Movie 6", "Drama", R.drawable.kino),
+                        Movie("Movie 7", "Drama", R.drawable.kino),
+                        Movie("Movie 8", "Drama", R.drawable.kino)
+                    ),
                 )
 
                 items(movieCategories) { (category, movies) ->
