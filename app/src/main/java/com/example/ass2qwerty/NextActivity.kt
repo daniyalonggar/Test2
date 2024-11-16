@@ -24,6 +24,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.CircleShape
+import android.content.Intent
+import androidx.compose.ui.platform.LocalContext
+import com.example.ass2qwerty.NextNextActivity
 
 
 
@@ -145,30 +148,39 @@ fun NextScreen(items: List<NavigationItem>) {
                         ) {
                             items(movies) { movie ->
                                 MovieBox(movie)
-
                             }
                             item {
+                                val context = LocalContext.current
                                 Column(
                                     horizontalAlignment = Alignment.End,
                                     verticalArrangement = Arrangement.Center,
-                                            modifier = Modifier.padding(end = 30.dp)
+                                    modifier = Modifier
+                                        .padding(end = 30.dp)
+                                        .clickable {
+                                            val intent = Intent(context, NextNextActivity::class.java).apply {
+                                                putExtra("category", category)
+                                            }
+                                            context.startActivity(intent)
+                                        }
                                 ) {
-
-                                        Image(
-                                            painter = painterResource(id = R.drawable.icon),
-                                            contentDescription = null,
-                                            modifier = Modifier
-                                                .size(20.dp)
-                                                .padding(bottom = 4.dp)
-                                            .align(Alignment.Start),
-                                            contentScale = ContentScale.Crop
-                                        )
-
-                                    Text("Показать все",  fontSize = 12.sp, modifier = Modifier.padding(top = 10.dp).align(Alignment.End))
+                                    Image(
+                                        painter = painterResource(id = R.drawable.icon),
+                                        contentDescription = null,
+                                        modifier = Modifier
+                                            .size(20.dp)
+                                            .padding(bottom = 4.dp),
+                                        contentScale = ContentScale.Crop
+                                    )
+                                    Text(
+                                        "Показать все",
+                                        fontSize = 12.sp,
+                                        modifier = Modifier.padding(top = 10.dp)
+                                    )
                                 }
-
                             }
+
                         }
+
 
 
                     }
