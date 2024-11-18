@@ -26,11 +26,13 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
+import android.content.Intent
+
 
 data class Cinema(val name: String, val genre: String, val imageUrl: String)
 
 interface ApiService {
-    @GET("api/v2.2/films/{id}") // Укажите свой endpoint
+    @GET("api/v2.2/films/{collections}") // Укажите свой endpoint
     suspend fun getCinemas(): List<Cinema>
 }
 
@@ -65,12 +67,36 @@ fun createRetrofit(): Retrofit {
 @Composable
 fun CinemaListScreen(category: String) {
     Scaffold(
-        topBar = { /* TopBar Code */ },
+        topBar = { TopAppBarWithBackButton() },
         bottomBar = { BottomNavigationBar() }
     ) { paddingValues ->
         CinemaGrid(modifier = Modifier.padding(paddingValues))
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopAppBarWithBackButton() {
+    val context = LocalContext.current
+
+    TopAppBar(
+        title = { Text(text = "Кинотека") },
+        navigationIcon = {
+            IconButton(onClick = {
+                // Запуск Intent для перехода на NextActivity
+                context.startActivity(Intent(context, NextActivity::class.java))
+            }) {
+                Image(
+                    painter = painterResource(id = R.drawable.back),
+                    contentDescription = "Назад"
+                )
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+    )
+}
+
+
 
 @Composable
 fun CinemaGrid(modifier: Modifier = Modifier) {
