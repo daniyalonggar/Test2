@@ -172,7 +172,7 @@ fun NextScreen(items: List<NavigationItem>) {
                                         contentScale = ContentScale.Crop
                                     )
                                     Text(
-                                        "Показать все",
+                                        "Показать все все" ,
                                         fontSize = 12.sp,
                                         modifier = Modifier.padding(top = 10.dp)
                                     )
