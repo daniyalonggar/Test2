@@ -85,4 +85,10 @@ dependencies {
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation ("androidx.compose.material3:material3:1.1.0")// Gson Converter for Retrofit
     implementation ("com.squareup.okhttp3:okhttp:4.10.0")
+
+    implementation ("com.google.accompanist:accompanist-pager:0.32.0")
+
+
+
+
 }

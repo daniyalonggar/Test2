@@ -27,22 +27,70 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import android.content.Intent
+import androidx.compose.foundation.lazy.LazyColumn
 
 
 data class Cinema(val name: String, val genre: String, val imageUrl: String)
 
-interface ApiService {
-    @GET("api/v2.2/films/{collections}") // Укажите свой endpoint
-    suspend fun getCinemas(): List<Cinema>
+interface ApiServicec {
+    @GET("api/v2.2/films/{collections}")
+    suspend fun getCinemas(
+        @retrofit2.http.Path("collections") collections: String
+    ): List<Cinema>
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 class NextNextActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val category = intent.getStringExtra("category") ?: "Unknown"
+
+        val category = intent.getStringExtra("category") ?: return
+
         setContent {
-            CinemaListScreen(category)
+            MoviesListScreen(category)
+        }
+    }
+}
+
+@Composable
+fun MoviesListScreen(category: String) {
+    var movies by remember { mutableStateOf<List<Movie>>(emptyList()) }
+    var isLoading by remember { mutableStateOf(true) }
+
+    LaunchedEffect(category) {
+        try {
+            movies = RetrofitInstance.api.getMoviesByCategory(category)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            isLoading = false
+        }
+    }
+
+    if (isLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+    } else {
+        LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+            items(movies.size) { index ->
+                val movie = movies[index]
+                Column(
+                    modifier = Modifier.padding(vertical = 8.dp)
+                ) {
+                    Image(
+                        painter = rememberImagePainter(data = movie.imageUrl),
+                        contentDescription = movie.title,
+                        modifier = Modifier.height(150.dp).fillMaxWidth(),
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(movie.title, fontSize = 20.sp)
+                    Text(movie.genre, fontSize = 14.sp)
+                }
+            }
         }
     }
 }
@@ -63,6 +111,29 @@ fun createRetrofit(): Retrofit {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 }
+object RetrofitInstancec {
+    private val retrofit: Retrofit by lazy {
+        Retrofit.Builder()
+            .baseUrl("https://kinopoiskapiunofficial.tech/")
+            .client(
+                OkHttpClient.Builder()
+                    .addInterceptor { chain ->
+                        val request = chain.request().newBuilder()
+                            .addHeader("X-API-KEY", "473e1748-9874-4151-bc69-4b3644ebb470")
+                            .build()
+                        chain.proceed(request)
+                    }
+                    .build()
+            )
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    val api: ApiService by lazy {
+        retrofit.create(ApiService::class.java)
+    }
+}
+
 
 @Composable
 fun CinemaListScreen(category: String) {
@@ -99,15 +170,15 @@ fun TopAppBarWithBackButton() {
 
 
 @Composable
+
 fun CinemaGrid(modifier: Modifier = Modifier) {
-    var cinemaList by remember { mutableStateOf(emptyList<Cinema>()) }
+    var cinemaList by remember { mutableStateOf<List<Cinema>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
-        val retrofit = createRetrofit()
-        val service = retrofit.create(ApiService::class.java)
         try {
-            cinemaList = service.getCinemas()
+            val response = RetrofitInstance.api.getCinemas("top") // Укажите коллекцию
+            cinemaList = response
         } catch (e: Exception) {
             e.printStackTrace()
         } finally {
@@ -132,6 +203,7 @@ fun CinemaGrid(modifier: Modifier = Modifier) {
         }
     }
 }
+
 
 @Composable
 fun MovieBox(cinema: Cinema) {
@@ -183,3 +255,5 @@ fun BottomNavigationItem(icon: Int, onClick: () -> Unit) {
         )
     }
 }
+
+

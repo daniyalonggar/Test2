@@ -20,6 +20,8 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import android.content.Intent
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 
 
 data class OnboardingPage(
@@ -32,11 +34,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            OnboardingScreens {
-                startActivity(Intent(this, NextActivity::class.java))
-            }
+            NavHostComponent(navController = rememberNavController())
         }
     }
+}
+
+class NavHostComponent(navController: NavHostController) {
+
 }
 
 @OptIn(ExperimentalPagerApi::class)
